@@ -1,0 +1,59 @@
+Soal 2.3 : 
+
+1. Menampilkan produk yang kode awalnya huruf K dan huruf M :
+- SELECT * FROM produk
+- WHERE kode LIKE 'K%' OR kode LIKE 'M%';
+
+2. Menampilkan produk yang kode awalnya bukan huruf M : 
+- SELECT * FROM produk
+- WHERE kode NOT LIKE 'M%';
+
+3. Menampilkan produk-produk Televisi :
+- SELECT * FROM produk
+- WHERE nama LIKE '%Televisi%' OR nama LIKE '%TV%';
+
+4. Menampilkan pelanggan mengandung huruf 'SA' :
+- SELECT * FROM pelanggan
+- WHERE nama LIKE '%SA';
+
+5. Menampilkan pelanggan yang lahirnya bukan di Jakarta dan mengandung huruf 'yo' : 
+- SELECT * FROM pelanggan
+- WHERE tmp_lahir <> 'Jakarta'
+- AND nama LIKE '%yo%' ;
+
+6. Menampilkan pelanggan yang karakter huruf ke-2 nya adalah A:
+- SELECT * FROM pelanggan
+- WHERE nama LIKE '_A%' ;
+
+
+Soal 2.4 : 
+
+1. Menampilkan 2 Data Produk Termahal : 
+- SELECT * FROM produk
+- ORDER BY harga_beli DESC
+- LIMIT 2;
+
+2. Menampilkan produk yang paling murah : 
+- SELECT * FROM produk
+- ORDER BY harga_beli ASC
+- LIMIT 1;
+
+3. Menampilkan produk yang stoknya paling banyak : 
+- SELECT * FROM produk
+- ORDER BY stok DESC
+- LIMIT 1;
+
+4. Menampilkan 2 produk yang stoknya paling sedikit : 
+- SELECT * FROM produk
+- ORDER BY stok ASC
+- LIMIT 2;
+
+5. Menampilkan pelanggan yang paling muda : 
+- SELECT * FROM pelanggan
+- ORDER BY tgl_lahir DESC
+- LIMIT 1;
+
+6. Menampilkan pelanggan yang paling tua : 
+- SELECT * FROM pelanggan
+- ORDER BY tgl_lahir ASC
+- LIMIT 1;
