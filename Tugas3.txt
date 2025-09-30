@@ -1,0 +1,61 @@
+Soal.5.1 View Query : 
+
+1. mysql> CREATE VIEW pesanan_pelanggan_kartu
+- AS SELECT pesanan.id , pesanan.tanggal, pesanan.total, pelanggan.kode, pelanggan.nama,
+- kartu.nama as nama_kartu, kartu.diskon 
+- FROM pesanan INNER JOIN pelanggan ON pesanan.pelanggan_id = pelanggan.id
+- INNER JOIN kartu ON pelanggan.kartu_id = kartu.id;
+- SELECT * FROM pesanan_pelanggan_kartu;
+
+2. mysql> CREATE pembelian_produk_vendor
+- AS SELECT pembelian.id, pembelian.tanggal, pembelian.nomor, pembelian.jumlah, pembelian.harga,
+- produk.nama AS nama_produk, vendor.nama AS nama_vendor, vendor.kontak
+- FROM pembelian INNER JOIN produk ON pembelian.produk_id = produk.id
+- INNER JOIN vendor ON pembelian.vendor_id = vendor.id;
+- SELECT * FROM pembelian_produk_vendor;
+
+3. mysql> CREATE VIEW pesanan_pelanggan_produk
+- AS SELECT pesanan.id, pesanan.tanggal, pesanan.total, pelanggan.nama AS nama_pelanggan, 
+- produk.kode AS kode_produk, produk.nama AS nama_produk, jenis_produk.nama AS nama_jenis_produk,
+- pesanan_items.qty, pesanan_items.harga
+- FROM pesanan INNER JOIN pelanggan on pesanan.pelanggan_id = pelanggan.id
+- INNER JOIN pesanan_items ON pesanan_items.pesanan_id = pesanan.id
+- INNER JOIN produk ON pesanan_items.produk_id = produk.id
+- INNER JOIN jenis_produk ON produk.jenis_produk_id = jenis_produk.id;
+- SELECT * FROM pesanan_pelanggan_produk;
+
+Soal. 5.2 Transaction : 
+
+1. Mulai Transaction :
+- START TRANSACTION;
+
+2. Insert data produk sebanyak 3 Record : 
+- INSERT INTO produk (kode, nama, harga_beli, harga_jual, stok, min_stok, jenis_produk_id)
+- VALUES
+- ('PRD001', 'Produk satu', 100000, 150000, 50, 5, 11),
+- ('PRD002', 'Produk dua', 200000, 250000, 30, 3, 2),
+- ('PRD003', 'Produk tiga', 5000, 8000, 20, 2, 3);
+
+3. Update data stok salah satu produk:
+- UPDATE produk
+- SET stok = 40
+- WHERE kode = 'PRD001';
+
+4. Buat Savepoint:
+- SAVEPOINT sebelum_hapus_pembayaran;
+
+5. Hapus salah satu data pembayaran:
+- DELETE FROM pembayaran
+- WHERE id = 5;
+
+6. Kembali ke savepoint:
+- ROLLBACK TO sebelum_hapus_pembayaran;
+
+7. Update data iuran salah satu kartu :
+- UPDATE kartu
+- SET iuran = 50000
+- WHERE id = 2;
+
+8. Akhiri Transaction dengan commit:
+- COMMIT;
+
