@@ -1,0 +1,96 @@
+6.1.1 Procedure & Function : 
+
+1. Procedure (pro_naikin_harga) : 
+- mysql> DELIMITER $$
+- CREATE PROCEDURE pro_naikin_harga(
+- IN jenis_produk INT,
+- IN presentasi_kenaikan INT)
+- BEGIN
+- UPDATE produk SET harga_jual = harga_jual + (harga_jual * -presentasi_kenaikan / 100)
+- WHERE jenis_produk_id = jenis_produk;
+- END $$
+- DELIMITER $$
+- CALL pro_naikin_harga(1, 4);
+
+2. Function umur : 
+- mysql> DELIMITER $$
+- CREATE FUNCTION umur(tgl_lahir DATE)
+- RETURN INT 
+- DETERMINISTIC
+- READ SQL DATA
+- BEGIN 
+- DECLARE hasil INT;
+- SET hasil = YEAR(CURDATE()) - YEAR(tgl_lahir);
+- RETURN hasil;
+- END $$
+- SELECT nama, umur(tgl_lahir) AS umur FROM pelanggan;
+
+3. Function Kategori_harga :
+- mysql> DELIMITER $$
+- CREATE FUNCTION kategori_harga(harga DOUBLE)
+- RETURN VARCHAR(20)
+- DETERMINISTIC
+- BEGIN
+- DECLARE hasil VARCHAR(20);
+- IF harga >= 0 AND harga <= 500000 THEN
+- SET hasil = ‘Murah’;
+- ELSEIF harga> 500000 AND harga <= 300000 THEN
+- SET hasil = ‘Sedang’;
+- ELSEIF harga> 3000000 AND harga <= 1000000 THEN
+- SET hasil = ‘Mahal’;
+- ELSEIF harga> 10000000 THEN
+- SET hasil = ‘Sangat Mahal’;
+- ELSE 
+- SET hasil = ‘Tidak Valid’;
+- END IF;
+- RETURN hasil;
+- END $$
+
+7.0 Trigger dan Procedure : 
+
+1. Trigger Cek Pembayaran : 
+- DELIMITER $$
+- CREATE TRIGGER cek_pembayaran
+- BEFORE INSERT ON pembayaran
+- FOR EACH ROW
+- BEGIN
+   - DECLARE total_bayar DECIMAL(10,2);
+   - DECLARE total_pesanan DECIMAL(10,2);
+- SELECT IFNULL(SUM(jumlah),0) INTO total_bayar
+- FROM pembayaran
+- WHERE pesanan_id = NEW.pesanan_id;
+- SELECT total INTO total_pesanan
+- FROM pesanan
+- WHERE id = NEW.pesanan_id;
+- IF total_bayar + NEW.jumlah >= total_pesanan THEN
+        - SET NEW.status_pembayaran = 'Lunas';
+    - ELSE
+        - SET NEW.status_pembayaran = 'Belum Lunas';
+    - END IF;
+- END $$
+- DELIMITER;
+- INSERT INTO pembayaran (no_kuitansi, tanggal, jumlah, ke, pesanan_id)
+- VALUES ('KWI001', '2023-03-03', 200000, 1, 1);
+
+2. Store Procedure kurangi_stok : 
+- DELIMITER $$
+- CREATE PROCEDURE kurangi_stok(
+    - IN p_produk_id INT,
+    - IN p_jumlah INT
+)
+- BEGIN
+    - UPDATE produk
+    - SET stok = stok - p_jumlah
+    - WHERE id = p_produk_id;
+- END $$
+- DELIMITER ;
+
+3. Trigger trig_kurangi_stok : 
+- DELIMITER $$
+- CREATE TRIGGER trig_kurangi_stok
+- AFTER INSERT ON pesanan_items
+- FOR EACH ROW
+- BEGIN
+- CALL kurangi_stok(NEW.produk_id, NEW.jumlah);
+- END $$
+- DELIMITER ;
